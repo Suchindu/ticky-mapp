@@ -11,13 +11,15 @@ import com.example.ticky.model.NoteModel
 import com.example.ticky.utils.COLUMN_NAME_DESCRIPTION
 import com.example.ticky.utils.COLUMN_NAME_TITLE
 import com.example.ticky.utils.TABLE_NAME
+import com.example.ticky.utils.COLUMN_DEADLINE
 
 
 private const val SQL_CREATE_ENTRIES =
     "CREATE TABLE $TABLE_NAME (" +
             "${BaseColumns._ID} INTEGER PRIMARY KEY," +
             "$COLUMN_NAME_TITLE TEXT," +
-            "$COLUMN_NAME_DESCRIPTION TEXT)"
+            "$COLUMN_NAME_DESCRIPTION TEXT," +
+            "$COLUMN_DEADLINE TEXT)"
 
 private const val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS $TABLE_NAME"
 
@@ -48,12 +50,13 @@ class DBOpenHelper(context: Context) : SQLiteOpenHelper(
         onUpgrade(db, oldVersion, newVersion)
     }
 
-    fun addNote(title: String, description: String, toString: String) {
+    fun addNote(title: String, description: String, deadline: String, toString: String) {
 
         val db = this.writableDatabase
         val values = ContentValues().apply {
             put(COLUMN_NAME_TITLE, title)
             put(COLUMN_NAME_DESCRIPTION, description)
+            put(COLUMN_DEADLINE, deadline)
         }
         db?.insert(TABLE_NAME, null, values)
         db.close()
@@ -73,7 +76,8 @@ class DBOpenHelper(context: Context) : SQLiteOpenHelper(
                     NoteModel(
                         cursorNotes.getInt(0),
                         cursorNotes.getString(1),
-                        cursorNotes.getString(2)
+                        cursorNotes.getString(2),
+                        cursorNotes.getString(3)
                     )
                 )
             } while (cursorNotes.moveToNext())
@@ -83,12 +87,13 @@ class DBOpenHelper(context: Context) : SQLiteOpenHelper(
 
     }
 
-    fun updateNote(id: String, title: String, description: String) {
+    fun updateNote(id: String, title: String, description: String,deadline: String) {
 
         val db = this.writableDatabase
         val values = ContentValues().apply {
             put(COLUMN_NAME_TITLE, title)
             put(COLUMN_NAME_DESCRIPTION, description)
+            put(COLUMN_DEADLINE, deadline)
         }
         try {
             db?.update(TABLE_NAME, values, "_id = ?", arrayOf(id))
@@ -110,6 +115,5 @@ class DBOpenHelper(context: Context) : SQLiteOpenHelper(
         }
 
     }
-
 
 }
