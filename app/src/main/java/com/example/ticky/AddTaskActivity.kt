@@ -7,6 +7,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import com.example.ticky.db.DBOpenHelper
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
+import java.util.Calendar
 
 class AddTaskActivity : AppCompatActivity() {
 
@@ -15,7 +18,7 @@ class AddTaskActivity : AppCompatActivity() {
     private lateinit var etDescription: TextInputLayout
     private lateinit var fabSend: FloatingActionButton
     private val dbOpenHelper = DBOpenHelper(this)
-
+    private lateinit var etDeadline: TextInputLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,6 +27,28 @@ class AddTaskActivity : AppCompatActivity() {
         etTitle = findViewById(R.id.et_title)
         etDescription = findViewById(R.id.et_description)
         fabSend = findViewById(R.id.fab_send)
+        etDeadline = findViewById(R.id.et_deadline)
+
+        etDeadline.editText?.setOnClickListener {
+            val calendar = Calendar.getInstance()
+            val dateSetListener = DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
+                calendar.set(Calendar.YEAR, year)
+                calendar.set(Calendar.MONTH, month)
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+                val timeSetListener = TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
+                    calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                    calendar.set(Calendar.MINUTE, minute)
+
+                    val deadline = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm").format(calendar.time)
+                    etDeadline.editText?.setText(deadline)
+                }
+
+                TimePickerDialog(this, timeSetListener, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true).show()
+            }
+
+            DatePickerDialog(this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
+        }
 
         fabSend.setOnClickListener {
             fabSendData()
@@ -45,10 +70,17 @@ class AddTaskActivity : AppCompatActivity() {
             return
         }
 
+        if (etDeadline.editText?.text.toString().isEmpty()) {
+            etDeadline.error = "Please enter your Deadline Date"
+            etDeadline.requestFocus()
+            return
+        }
+
         if (notEmpty()) {
             dbOpenHelper.addNote(
                 etTitle.editText?.text.toString(),
-                etDescription.editText?.text.toString()
+                etDescription.editText?.text.toString(),
+                etDeadline.editText?.text.toString()
             )
             Toast.makeText(this, "Added", Toast.LENGTH_SHORT).show()
             val intentToMainActivity = Intent(this, MainActivity::class.java)
@@ -61,7 +93,8 @@ class AddTaskActivity : AppCompatActivity() {
 
     private fun notEmpty(): Boolean {
         return (etTitle.editText?.text.toString().isNotEmpty()
-                && etDescription.editText?.text.toString().isNotEmpty())
+                && etDescription.editText?.text.toString().isNotEmpty()
+                && etDeadline.editText?.text.toString().isNotEmpty())
     }
 
 }

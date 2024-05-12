@@ -48,7 +48,7 @@ class DBOpenHelper(context: Context) : SQLiteOpenHelper(
         onUpgrade(db, oldVersion, newVersion)
     }
 
-    fun addNote(title: String, description: String) {
+    fun addNote(title: String, description: String, toString: String) {
 
         val db = this.writableDatabase
         val values = ContentValues().apply {
