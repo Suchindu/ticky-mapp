@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import com.example.ticky.db.DBOpenHelper
+import com.example.ticky.utils.COLUMN_DEADLINE
 import com.example.ticky.utils.COLUMN_NAME_DESCRIPTION
 import com.example.ticky.utils.COLUMN_NAME_TITLE
 
@@ -18,6 +19,7 @@ class UpdateTaskActivity : AppCompatActivity() {
 
     private lateinit var etUpdatedTitle: TextInputLayout
     private lateinit var etUpdatedDescription: TextInputLayout
+    private lateinit var etUpdatedDeadline: TextInputLayout
     private lateinit var fabUpdate: FloatingActionButton
     private val dbOpenHelper = DBOpenHelper(this)
 
@@ -28,10 +30,13 @@ class UpdateTaskActivity : AppCompatActivity() {
 
         etUpdatedTitle = findViewById(R.id.et_updated_title)
         etUpdatedDescription = findViewById(R.id.et_updated_description)
+        etUpdatedDeadline = findViewById(R.id.et_updated_deadline)
         fabUpdate = findViewById(R.id.fab_update)
 
         val titleOld = intent.getStringExtra(COLUMN_NAME_TITLE)
         val descriptionOld = intent.getStringExtra(COLUMN_NAME_DESCRIPTION)
+        val deadlineOld = intent.getStringExtra(COLUMN_DEADLINE)
+
 
 
         if (!titleOld.isNullOrBlank()) {
@@ -40,9 +45,13 @@ class UpdateTaskActivity : AppCompatActivity() {
                 Editable.Factory.getInstance().newEditable(titleOld)
             etUpdatedDescription.editText?.text =
                 Editable.Factory.getInstance().newEditable(descriptionOld)
+            etUpdatedDeadline.editText?.text =
+                Editable.Factory.getInstance().newEditable(deadlineOld)
+
 
             Log.d("UpdateNoteActivity", titleOld.toString())
             Log.d("UpdateNoteActivity", descriptionOld.toString())
+            Log.d("UpdateNoteActivity", deadlineOld.toString())
 
         } else {
             Log.d("UpdateNoteActivity", "value was null")
@@ -71,12 +80,20 @@ class UpdateTaskActivity : AppCompatActivity() {
             return
         }
 
+        if (etUpdatedDeadline.editText?.text.toString().isEmpty()) {
+            etUpdatedDeadline.error = "Please enter your Description"
+            etUpdatedDeadline.requestFocus()
+            return
+        }
+
         if (notEmpty()) {
 
             dbOpenHelper.updateNote(
                 id,
                 etUpdatedTitle.editText?.text.toString(),
-                etUpdatedDescription.editText?.text.toString()
+                etUpdatedDescription.editText?.text.toString(),
+                etUpdatedDeadline.editText?.text.toString()
+
             )
             Toast.makeText(this, "Updated!", Toast.LENGTH_SHORT).show()
             val intentToMainActivity = Intent(this, MainActivity::class.java)
@@ -88,7 +105,9 @@ class UpdateTaskActivity : AppCompatActivity() {
 
     private fun notEmpty(): Boolean {
         return (etUpdatedTitle.editText?.text.toString().isNotEmpty()
-                && etUpdatedDescription.editText?.text.toString().isNotEmpty())
+                && etUpdatedDescription.editText?.text.toString().isNotEmpty()
+                && etUpdatedDeadline.editText?.text.toString().isNotEmpty())
+
     }
 
 }

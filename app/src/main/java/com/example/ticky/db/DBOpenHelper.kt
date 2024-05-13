@@ -33,7 +33,7 @@ class DBOpenHelper(context: Context) : SQLiteOpenHelper(
 
     companion object {
         // If you change the database schema, you must increment the database version.
-        private const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 2
         private const val DATABASE_NAME = "NoteApp.dp"
     }
 
@@ -50,7 +50,7 @@ class DBOpenHelper(context: Context) : SQLiteOpenHelper(
         onUpgrade(db, oldVersion, newVersion)
     }
 
-    fun addNote(title: String, description: String, deadline: String, toString: String) {
+    fun addNote(title: String?, description: String?, deadline: String?) {
 
         val db = this.writableDatabase
         val values = ContentValues().apply {
@@ -87,7 +87,7 @@ class DBOpenHelper(context: Context) : SQLiteOpenHelper(
 
     }
 
-    fun updateNote(id: String, title: String, description: String,deadline: String) {
+    fun updateNote(id: String?, title: String?, description: String?,deadline: String?) {
 
         val db = this.writableDatabase
         val values = ContentValues().apply {
