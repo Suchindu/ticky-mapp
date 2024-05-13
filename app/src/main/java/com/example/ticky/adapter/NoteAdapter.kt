@@ -23,6 +23,7 @@ class NoteAdapter(
         val textTitle: TextView = view.findViewById(R.id.text_title)
         val textDescription: TextView = view.findViewById(R.id.text_description)
         val textDeadline: TextView = view.findViewById(R.id.textView2)
+        val textPriority: TextView = view.findViewById(R.id.textView3)
         val btnEdit: MaterialButton = view.findViewById(R.id.btn_edit)
         val btnDelete: MaterialButton = view.findViewById(R.id.btn_delete)
 
@@ -45,6 +46,7 @@ class NoteAdapter(
         holder.textTitle.text = item.title
         holder.textDescription.text = item.description
         holder.textDeadline.text = item.deadline
+        holder.textPriority.text = item.priority
 
         holder.btnEdit.setOnClickListener {
             dialog.editDialog(context, item)

@@ -12,6 +12,7 @@ import com.example.ticky.utils.COLUMN_NAME_DESCRIPTION
 import com.example.ticky.utils.COLUMN_NAME_TITLE
 import com.example.ticky.utils.TABLE_NAME
 import com.example.ticky.utils.COLUMN_DEADLINE
+import com.example.ticky.utils.COLUMN_PRIORITY
 
 
 private const val SQL_CREATE_ENTRIES =
@@ -19,7 +20,8 @@ private const val SQL_CREATE_ENTRIES =
             "${BaseColumns._ID} INTEGER PRIMARY KEY," +
             "$COLUMN_NAME_TITLE TEXT," +
             "$COLUMN_NAME_DESCRIPTION TEXT," +
-            "$COLUMN_DEADLINE TEXT)"
+            "$COLUMN_DEADLINE TEXT," +
+            "$COLUMN_PRIORITY TEXT)"
 
 private const val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS $TABLE_NAME"
 
@@ -33,7 +35,7 @@ class DBOpenHelper(context: Context) : SQLiteOpenHelper(
 
     companion object {
         // If you change the database schema, you must increment the database version.
-        private const val DATABASE_VERSION = 2
+        private const val DATABASE_VERSION = 3
         private const val DATABASE_NAME = "NoteApp.dp"
     }
 
@@ -50,16 +52,18 @@ class DBOpenHelper(context: Context) : SQLiteOpenHelper(
         onUpgrade(db, oldVersion, newVersion)
     }
 
-    fun addNote(title: String?, description: String?, deadline: String?) {
+    fun addNote(title: String?, description: String?, deadline: String?, priority: String?) {
 
         val db = this.writableDatabase
         val values = ContentValues().apply {
             put(COLUMN_NAME_TITLE, title)
             put(COLUMN_NAME_DESCRIPTION, description)
             put(COLUMN_DEADLINE, deadline)
+            put(COLUMN_PRIORITY, priority)
         }
         db?.insert(TABLE_NAME, null, values)
         db.close()
+        Log.d("DBOpenHelper", "Added note with deadline: $deadline")
 
     }
 
@@ -77,7 +81,8 @@ class DBOpenHelper(context: Context) : SQLiteOpenHelper(
                         cursorNotes.getInt(0),
                         cursorNotes.getString(1),
                         cursorNotes.getString(2),
-                        cursorNotes.getString(3)
+                        cursorNotes.getString(3),
+                        cursorNotes.getString(4)
                     )
                 )
             } while (cursorNotes.moveToNext())
@@ -87,13 +92,14 @@ class DBOpenHelper(context: Context) : SQLiteOpenHelper(
 
     }
 
-    fun updateNote(id: String?, title: String?, description: String?,deadline: String?) {
+    fun updateNote(id: String?, title: String?, description: String?,deadline: String?, priority: String?) {
 
         val db = this.writableDatabase
         val values = ContentValues().apply {
             put(COLUMN_NAME_TITLE, title)
             put(COLUMN_NAME_DESCRIPTION, description)
             put(COLUMN_DEADLINE, deadline)
+            put(COLUMN_PRIORITY, priority)
         }
         try {
             db?.update(TABLE_NAME, values, "_id = ?", arrayOf(id))

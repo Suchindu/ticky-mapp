@@ -9,6 +9,8 @@ import com.google.android.material.textfield.TextInputLayout
 import com.example.ticky.db.DBOpenHelper
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import java.util.Calendar
 
 class AddTaskActivity : AppCompatActivity() {
@@ -19,6 +21,8 @@ class AddTaskActivity : AppCompatActivity() {
     private lateinit var fabSend: FloatingActionButton
     private val dbOpenHelper = DBOpenHelper(this)
     private lateinit var etDeadline: TextInputLayout
+    private lateinit var radioGroup: RadioGroup
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +32,7 @@ class AddTaskActivity : AppCompatActivity() {
         etDescription = findViewById(R.id.et_description)
         fabSend = findViewById(R.id.fab_send)
         etDeadline = findViewById(R.id.et_deadline)
+        radioGroup = findViewById(R.id.radioGroup_priority)
 
         etDeadline.editText?.setOnClickListener {
             val calendar = Calendar.getInstance()
@@ -76,11 +81,15 @@ class AddTaskActivity : AppCompatActivity() {
             return
         }
 
+        val selectedPriorityId = radioGroup.checkedRadioButtonId
+        val selectedPriority = findViewById<RadioButton>(selectedPriorityId).text.toString()
+
         if (notEmpty()) {
             dbOpenHelper.addNote(
                 etTitle.editText?.text.toString(),
                 etDescription.editText?.text.toString(),
-                etDeadline.editText?.text.toString()
+                etDeadline.editText?.text.toString(),
+                selectedPriority
             )
             Toast.makeText(this, "Added", Toast.LENGTH_SHORT).show()
             val intentToMainActivity = Intent(this, MainActivity::class.java)
@@ -92,9 +101,12 @@ class AddTaskActivity : AppCompatActivity() {
 
 
     private fun notEmpty(): Boolean {
+        val selectedPriorityId = radioGroup.checkedRadioButtonId
         return (etTitle.editText?.text.toString().isNotEmpty()
                 && etDescription.editText?.text.toString().isNotEmpty()
-                && etDeadline.editText?.text.toString().isNotEmpty())
+                && etDeadline.editText?.text.toString().isNotEmpty()
+                && selectedPriorityId != -1)
+
     }
 
 }
