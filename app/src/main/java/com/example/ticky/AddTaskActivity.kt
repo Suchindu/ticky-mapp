@@ -1,5 +1,6 @@
 package com.example.ticky
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -22,6 +23,14 @@ class AddTaskActivity : AppCompatActivity() {
     private val dbOpenHelper = DBOpenHelper(this)
     private lateinit var etDeadline: TextInputLayout
     private lateinit var radioGroup: RadioGroup
+
+    @SuppressLint("MissingSuperCall")
+    override fun onBackPressed() {
+        val intentToMainActivity = Intent(this, MainActivity::class.java)
+        intentToMainActivity.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+        startActivity(intentToMainActivity)
+        finish()
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,5 +117,6 @@ class AddTaskActivity : AppCompatActivity() {
                 && selectedPriorityId != -1)
 
     }
+
 
 }

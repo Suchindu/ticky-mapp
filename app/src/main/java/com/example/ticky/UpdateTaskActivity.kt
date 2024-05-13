@@ -1,5 +1,6 @@
 package com.example.ticky
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
@@ -31,6 +32,14 @@ class UpdateTaskActivity : AppCompatActivity() {
     private lateinit var radioGroup: RadioGroup
     private val dbOpenHelper = DBOpenHelper(this)
 
+    @SuppressLint("MissingSuperCall")
+    override fun onBackPressed() {
+        val intentToMainActivity = Intent(this, MainActivity::class.java)
+        intentToMainActivity.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+        startActivity(intentToMainActivity)
+        finish()
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +54,7 @@ class UpdateTaskActivity : AppCompatActivity() {
         val titleOld = intent.getStringExtra(COLUMN_NAME_TITLE)
         val descriptionOld = intent.getStringExtra(COLUMN_NAME_DESCRIPTION)
         val deadlineOld = intent.getStringExtra(COLUMN_DEADLINE)
-        val priorityOld = intent.getStringExtra(COLUMN_PRIORITY)
+
 
         if (!titleOld.isNullOrBlank()) {
             etUpdatedTitle.editText?.text = Editable.Factory.getInstance().newEditable(titleOld)
